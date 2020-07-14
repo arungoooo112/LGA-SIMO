@@ -78,7 +78,7 @@ for iRef = 1 : numel(Refs) % Loop over boundaries
 end
 % Convert triplet data to sparse matrix
 % --------------------------------------------------------------------
-A = sparse(GARows, GACols, GAVals);
+A = sparse(GARows, GACols, GAVals); 
 F = sparse(GFIdcs, ones(numel(GFIdcs), 1), GFVals);
 % --------------------------------------------------------------------
 Coeffs = full(A(GDofs, GDofs) \ F(GDofs));
@@ -92,7 +92,7 @@ function [GARows, GACols, GAVals, GFIdcs, GFVals, GDofs] =...
     getDrchltBdryData(NURBS, Mesh, iSide, h, LAB, GARows, GACols, GAVals, GFIdcs, GFVals, GDofs, varargin)
 MeshBdry = Mesh.Boundary(iSide);
 NURBSBdry = NURBSBoundary(NURBS, iSide);
-% LDofs 为相应分量的网格点索引
+% LDofs 为局部自由度分量的网格点索引
 if strcmp(LAB, 'TEMP') || strcmp(LAB, 'PLATE') % thermal or plate problem
     if nargin == 12 && isvector(varargin{:}) % coupling dofs or multiple patches of thermal or plate problem
         LDofs = varargin{:}(MeshBdry.Dofs);
@@ -117,20 +117,20 @@ elseif strcmp(LAB, 'UZ')
     else
         LDofs = MeshBdry.CompDofs{3};
     end
-end % 以上获取相应分量的网格点索引
+end % 以上获取 Dof 的网格点索引
 if NURBSBdry.Dim == 1
     [LAVals, LFVals] = applyL2Proj2D(NURBSBdry, MeshBdry, h);
 elseif NURBSBdry.Dim ==2
     [LAVals, LFVals] = applyL2Proj3D(NURBSBdry, MeshBdry, h);
-end
+end 
 
-J = repmat(1 : MeshBdry.NEN, MeshBdry.NEN, 1);  
 % NEN是网格边界基函数的个数，
 % J的形式是
 % 1 2 3 4 ... NEN
 % 1 2 3 4 ... NEN
 % ...............
 % 1 2 3 4 ... NEN (第NEN行)
+J = repmat(1 : MeshBdry.NEN, MeshBdry.NEN, 1);  
 
 I = J';
 ii = MeshBdry.El(:, I(:))';
@@ -141,12 +141,12 @@ LACols = LDofs(jj(:));
 tmp = MeshBdry.El'; % indices of local force vector
 LFIdcs = LDofs(tmp(:));
 
-GARows = cat(1, GARows, LARows);
+GARows = cat(1, GARows, LARows); % 按列连接
 GACols = cat(1, GACols, LACols);
 GAVals = cat(1, GAVals, LAVals);
 GFIdcs = cat(1, GFIdcs, LFIdcs);
 GFVals = cat(1, GFVals, LFVals);
-GDofs = union(GDofs, LDofs);
+GDofs = union(GDofs, LDofs); % 取并运算。
 end
 % -----------------------------------------------------------------------
 % L2 Projection: project an arbitrary function h \in L2(\Gamma) into a
@@ -171,7 +171,7 @@ NGPs = NURBS.Order + 1;
 % Nx是基函数及其导数
 
 for e = 1 : Mesh.NElDir(1) %  一个网格一个网格的进行计算
-    LA = zeros(Mesh.NEN);   
+    LA = zeros(Mesh.NEN);
     LF = zeros(Mesh.NEN, 1);
     for qx = 1 : NGPs
         N0 = Nx(e, qx, :, 1);
