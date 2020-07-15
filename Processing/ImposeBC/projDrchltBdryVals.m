@@ -171,21 +171,21 @@ NGPs = NURBS.Order + 1;
 % Nx是基函数及其导数
 
 for e = 1 : Mesh.NElDir(1) %  一个网格一个网格的进行计算
+
     LA = zeros(Mesh.NEN);
     LF = zeros(Mesh.NEN, 1);
-    for qx = 1 : NGPs
+    for qx = 1 : NGPs % 对高斯点进行求和
         N0 = Nx(e, qx, :, 1);
         N1 = Nx(e, qx, :, 2);
-		
-        [R0, R1] = Rationalize(Weights(Mesh.El(e, :)), N0(:)', N1(:)');
-		% 有理化，R0是NURBS基函数，R1是对应的一阶导数
-		
-        % gradient of mapping from parameter space to physical space
-		% 从参数空间到物理空间的映射的梯度
-        dxdxi = R1 * CtrlPts(Mesh.El(e, :), :);
+     
+	% 有理化，R0是NURBS基函数，R1是对应的一阶导数		
+        [R0, R1] = Rationalize(Weights(Mesh.El(e, :)), N0(:)', N1(:)');	
+	% 从参数空间到物理空间的映射的梯度
+        dxdxi = R1 * CtrlPts(Mesh.El(e, :), :); % 得到一个坐标维数大小的行向量梯度：(dx/du, dy/dv, dz/dw)
         % compute the jacobian of physical and parameter domain mapping
 		% 计算物理和参数域映射的雅可比矩阵
-        J1 = norm(dxdxi);
+        J1 = norm(dxdxi); % 还是不懂啊!
+
         LA = LA + R0' * R0 * J1 * Jx(e) * Wx(qx);
         
         Pts = R0 * CtrlPts(Mesh.El(e, :), :);
