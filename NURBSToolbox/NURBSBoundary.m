@@ -1,7 +1,7 @@
 function Bdry = NURBSBoundary(NURBS, iSide)
 % function Bdry = NURBSBoundary(NURBS, iSide)
 % --------------------------------------------------------------
-% Extract the boundary of a NURBS structure
+% Extract the boundary of a NURBS structure 提取 NURBS 边界
 % --------------------------------------------------------------
 % For 1D case:
 % 

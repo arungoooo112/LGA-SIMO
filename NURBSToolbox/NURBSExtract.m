@@ -2,6 +2,7 @@ function ONURBS = NURBSExtract(INURBS, Dir, val)
 % function ONURBS = NURBSExtract(INURBS, Dir, val)
 % ------------------------------------------------------------------
 % Extract lower dimensional NURBS object.
+% 提取低维度的NURBS对象，即，将某一维的值锁定，得到低维NURBS，3D -> 2D; 2D -> 1D
 %-------------------------------------------------------------------
 % Input:
 %       INURBS: input NURBS structure
@@ -32,24 +33,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 % if 'Dir'th dimension of CtrlPts4D matrix is not the last
 % dimension, then permute it until it lies at last dimension
-if Dir ~= INURBS.Dim
-    Dirs = 1 : INURBS.Dim + 1;
-    Dirs(Dir + 1) = [];
-    Dirs = [Dirs, Dir + 1];
-    temp = permute(INURBS.CtrlPts4D, Dirs);
+
+
+% 将 'Dir'th dimension 重排到 last dimension，注意 第一位为权值不变，故需 Dir + 1 
+if Dir ~= INURBS.Dim  % 假设 Dir = 1，Dim = 3
+    Dirs = 1 : (INURBS.Dim + 1);  % Dirs = [1,2,3,4];
+    Dirs(Dir + 1) = []; % Dirs = [1,3,4];
+    Dirs = [Dirs, Dir + 1]; % Dirs = [1,3,4,2]; if Dir = 2, [1,2,4,3]
+    temp = permute(INURBS.CtrlPts4D, Dirs);  % 对N维数组重新排列其维数，
 else
     temp = INURBS.CtrlPts4D;
 end
 dim = size(temp);
-temp = reshape(temp, [], dim(end));
+temp = reshape(temp, [], dim(end)); % 变成 end 列,即 Dir 方向基函数个数
 
 CtrlPts = CurvPntByCornerCut(INURBS.NCtrlPts(Dir),...
-    INURBS.Order(Dir), INURBS.KntVect{Dir}, temp, val);
+    INURBS.Order(Dir), INURBS.KntVect{Dir}, temp, val);  %通过割角方式计算控制点,
 
 CtrlPts = reshape(CtrlPts, dim(1 : end - 1));
 
 KntVect = INURBS.KntVect;
 KntVect{Dir} = [];
-KntVect = KntVect(~cellfun(@isempty, KntVect));
+KntVect = KntVect(~cellfun(@isempty, KntVect)); % 获取非零节点矢量
 ONURBS = CreateNURBS(KntVect, CtrlPts);
 end

@@ -9,7 +9,8 @@ function NURBS = CreateNURBS(KntVect, CtrlPts)
 % location of an arbitrary control point is identified by [x1*w1; y1*w1; z1*w1; w1]
 %--------------------------------------------------------------------------
 % Output:
-%       NURBS: a NURBS structure, including
+
+%       NURBS: a NURBS structure, including			% NURBS的数据结构
 %           NURBS.NDS       : number of dimensional space  NURBS的维数
 %           NURBS.KntVect   : knot vector(s) stored in cell format  节点向量
 %           NURBS.uqKntVect : unique knot values of knot vector(s) in cell format  unique  节点向量
@@ -21,7 +22,7 @@ function NURBS = CreateNURBS(KntVect, CtrlPts)
 %           NURBS.Dim       : number of dimensions of the NURBS patch  Dim = 1是线，2是面，3是体
 %           NURBS.NCtrlPts  : number of control points in each direction  控制点
 %           NURBS.Order     : degree of basis functions in each direction  每个方向基函数的次数
-%           NURBS.NNP       : total number of control points, "NP" is an abbreviation for nodal points 控制点的总个数
+%           NURBS.NNP       : total number of control points, "NP" is an abbreviation for nodal points  控制点的总个数
 %--------------------------------------------------------------------------
 
 %{
@@ -87,3 +88,4 @@ NURBS.NCtrlPts = NCtrlPts; % 各方向控制点总数，数组
 NURBS.Order = p;    % number of total control points
 NURBS.NNP = prod(NCtrlPts); %"NP" is an abbreviation for nodal points
 end
+
