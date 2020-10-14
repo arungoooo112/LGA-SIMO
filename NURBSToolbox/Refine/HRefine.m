@@ -35,7 +35,7 @@ else
     % if 'Dir'th dimension of CtrlPts4D matrix is not the last
     % dimension, then permute it until it lies at last dimension
     if Dir ~= INURBS.Dim
-        Dirs = 1 : INURBS.Dim + 1;
+        Dirs = 1 : (INURBS.Dim + 1);
         Dirs(Dir + 1) = [];
         Dirs = [Dirs, Dir + 1];
         tmp = permute(INURBS.CtrlPts4D, Dirs);
@@ -44,7 +44,7 @@ else
     end
     dim = size(tmp);
     tmp = reshape(tmp, [], dim(end));
-    
+    % 沿某一方向，将其余维度的坐标点看成一个扩展维度的坐标，即对高维曲线进行细化
     [KntVect, CtrlPts] = RefineKntVectCurv(INURBS.Order(Dir), INURBS.KntVect{Dir}, tmp, InsKnts);
     
     CtrlPts = reshape(CtrlPts, [dim(1 : end - 1), size(CtrlPts, 2)]);
